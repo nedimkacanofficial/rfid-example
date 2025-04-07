@@ -29,6 +29,23 @@ if(isset($_POST['kaydet'])){
 if(isset($_POST['iptal'])){
    $cardId = $fullname = $role = $balance = "";
 }
+
+// Silme işlemi
+if(isset($_POST['sil'])){
+   $cardIdToDelete = $_POST['cardIdToDelete'] ?? "";
+   if($cardIdToDelete){
+      require 'db.php';
+      $stmt = $pdo->prepare("DELETE FROM cards WHERE card_id = ?");
+      $stmt->execute([$cardIdToDelete]);
+      $mesaj = "✅ Kart silindi.";
+   }
+}
+
+// Listeleme kısmı
+require 'db.php';
+$stmt = $pdo->prepare("SELECT * FROM cards");
+$stmt->execute();
+$cards = $stmt->fetchAll();
 ?>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -65,6 +82,35 @@ if(isset($_POST['iptal'])){
                 <button type="submit" name="iptal" class="btn btn-danger">Kart Değiştir</button>
             <?php endif; ?>
             </form>
+            
+            <h3 class="mt-4">Kayıtlı Kartlar</h3>
+            <table class="table mt-3">
+                <thead>
+                    <tr>
+                        <th>Kart ID</th>
+                        <th>Ad Soyad</th>
+                        <th>Durum</th>
+                        <th>Bakiye</th>
+                        <th>İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($cards as $card): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($card['card_id']); ?></td>
+                        <td><?php echo htmlspecialchars($card['fullname']); ?></td>
+                        <td><?php echo htmlspecialchars($card['role']); ?></td>
+                        <td><?php echo htmlspecialchars($card['balance']); ?>₺</td>
+                        <td>
+                            <form method="post" style="display:inline;">
+                                <input type="hidden" name="cardIdToDelete" value="<?php echo htmlspecialchars($card['card_id']); ?>">
+                                <button type="submit" name="sil" class="btn btn-danger btn-sm">Sil</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
