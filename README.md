@@ -30,3 +30,6 @@ To get started, clone the repository to your local machine:
 
 ```bash
 git clone https://github.com/yourusername/rfid-card-registration-system.git
+```
+
+![RFID Card Registration Screenshot](screenshot/Screenshot%202025-04-07%20210431.png)
